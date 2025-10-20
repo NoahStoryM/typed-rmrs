@@ -1,0 +1,297 @@
+#+TITLE: Typed Racket Module for Revised Scheme
+#+AUTHOR: Noah Ma
+#+EMAIL: noahstorym@gmail.com
+
+* Table of Contents                                       :TOC_5_gh:noexport:
+- [[#简介][简介]]
+- [[#设计哲学][设计哲学]]
+- [[#库规则][库规则]]
+- [[#库结构][库结构]]
+  - [[#第一版][第一版]]
+
+* 简介
+rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket 风格编程的兼容层。
+它为 R6RS 与 R7RS-small 提供统一接口，并在兼容 SRFI 的基础上尽可能复现 Racket 的语义。
+
+项目目标：
+- 让 Scheme 用户能以 Racket 风格写模块；
+- 让 Racket 程序可编译为 R6RS/R7RS-small；
+- 作为未来 typed/rmrs 的基础，为 Scheme 提供可选类型的语法前端。
+
+
+* 设计哲学
+1. **兼容性优先**：所有库可在 R6RS 与 R7RS-small 环境下编译；
+2. **模块化**：rmrs 分为多个子库，例如 ~(rmrs scheme)~ 、 ~(rmrs srfi)~ 、 ~(rmrs racket)~ ；
+3. **最小核心**：核心库设计参考 R7RS-small，只提供最基础语义，核心库需要手动用 Racket, R6RS, R7RS-Small 写三种实现；
+4. **依赖最小化**：每个库依赖应尽可能少；
+5. **来源一致性**：每个库只导出一种来源（rnrs / srfi / racket），不能混合；
+6. **命名无冲突**：
+   - 若运算符名称不冲突，且在 rnrs/srfi/racket 中都有相似功能，则优先使用 Racket 版本；
+   - 若名称冲突，则放入 ~(rmrs srfi)~ 或 ~(rmrs scheme)~ ，避免出现在 ~(rmrs racket)~ ；
+7. **明确来源**：
+   - Racket 特有符号放入 ~rmrs-racket~ ；
+   - 来自 SRFI 的符号使用 ~rmrs-srfi~ 导出；
+   - 核心 Scheme 符号放入 ~rmrs-scheme~ 。
+
+* 库规则
+- 一个库导出的运算符要么是 rnrs 里的，要么是 srfi 里的，要么是 racket 里的，不能混合在一起
+- 核心库意味着要分别用 racket, r6rs, r7rs-small 写三种实现
+- 核心库的设计要参考 r7rs-small，仅可能小
+- 每个库所需要的依赖应仅可能少
+- 当 r6rs 或者 s7rs-small 里的运算符来自于 srfi 的时候，将其用 rmrs-srfi 导出
+- 如果某运算符在 rnrs，srfi 和 racket 里都有类似的实现，那么优先考虑使用 racket 的运算符，其次 srfi，其次 r7rs-small，最后 r6rs
+- 如果某运算符在 rnrs，srfi 和 racket 里都有相同的名字，那么优先考虑将库放在 rmrs-srfi，其次 rmrs-scheme，不应该放在 rmrs-racket 里，因为期望 rmrs-racket 导出的运算符与 rnrs srfi 都不会重名冲突
+
+
+* 库结构
+** 第一版
+#+begin_src racket
+'[(rmrs)
+  [(rmrs racket)
+   [(rmrs racket base)
+    [(rmrs racket base case-lambda)
+     case-λ]
+    [(rmrs racket base data)
+     [(rmrs racket base data bytes)
+      [(rmrs racket base data bytes base)
+       bytes                    bytes-append
+       bytes-copy               bytes-length
+       bytes-ref                bytes?
+       make-bytes               byte-ready?]
+      [(rmrs racket base data bytes conversion)
+       string->bytes            bytes->string]
+      [(rmrs racket base data bytes mutator)
+       bytes-copy!              bytes-set!]]
+     [(rmrs racket base data mpair)
+      [(rmrs racket base data mpair base)
+       mcar                     mcdr
+       mcons                    mpair?]
+      [(rmrs racket base data mpair mutator)
+       set-mcar!                set-mcdr!]]]
+    [(rmrs racket base lambda)
+     λ]
+    [(rmrs racket base port)
+     eof                      get-output-bytes
+     open-input-bytes         open-output-bytes
+     peek-byte                read-bytes
+     read-bytes!              read-byte
+     write-bytes              write-byte]]
+   [(rmrs racket case eq)
+    case/eq]
+   [(rmrs racket mpair)
+    [(rmrs racket mpair base)
+     make-mlist
+     mappend                  massoc
+     massq                    massv
+     mfor-each                mlength
+     mlist                    mlist-copy
+     mlist-ref                mlist-tail
+     mlist?                   mmap
+     mmember                  mmemq
+     mmemv                    mreverse]
+    [(rmrs racket mpair conversion)
+     mlist->string            mlist->vector
+     string->mlist            vector->mlist]
+    [(rmrs racket mpair mutator)
+     mlist-set!]
+    [(rmrs racket mpair cxr)
+     mcaar                    mcadr
+     mcdar                    mcddr
+     mcaaar                   mcaadr
+     mcadar                   mcaddr
+     mcdaar                   mcdadr
+     mcddar                   mcdddr
+     mcaaaar                  mcaaadr
+     mcaadar                  mcaaddr
+     mcadaar                  mcadadr
+     mcaddar                  mcadddr
+     mcdaaar                  mcdaadr
+     mcdadar                  mcdaddr
+     mcddaar                  mcddadr
+     mcdddar                  mcddddr]]]
+  [(rmrs scheme)
+   [(rmrs scheme base)
+    [(rmrs scheme base continuation)
+     call-with-current-continuation
+     call/cc                  dynamic-wind]
+    [(rmrs scheme base condition)
+     cond                     unless
+     when]
+    [(rmrs scheme base data)
+     [(rmrs scheme base data boolean)
+      and                      boolean=?
+      boolean?                 not
+      or]
+     [(rmrs scheme base data character)
+      char<=?                  char<?
+      char=?                   char>=?
+      char>?                   char?]
+     [(rmrs scheme base data conversion)
+      char->integer            integer->char
+      number->string           string->number
+      string->symbol           string->vector
+      symbol->string           vector->string]
+     [(rmrs scheme base data null)
+      null?]
+     [(rmrs scheme base data number)
+      *                        +
+      -                        /
+      <                        <=
+      =                        >
+      >=                       abs
+      ceiling                  complex?
+      denominator              even?
+      exact                    exact-integer-sqrt
+      exact-integer?           exact?
+      expt                     floor
+      floor-quotient           floor-remainder
+      floor/                   gcd
+      inexact                  inexact?
+      integer?                 lcm
+      max                      min
+      modulo                   negative?
+      number?                  numerator
+      odd?                     positive?
+      quotient                 rational?
+      rationalize              real?
+      remainder                round
+      square                   truncate
+      truncate-quotient        truncate-remainder
+      truncate/                zero?]
+     [(rmrs scheme base data string)
+      [(rmrs scheme base data string base)
+       make-string              string
+       string-append            string-copy
+       string-for-each          string-length
+       string-map               string-ref
+       string<=?                string<?
+       string=?                 string>=?
+       string>?                 string?
+       substring]
+      [(rmrs scheme base data string mutator)
+       string-copy!             string-fill!
+       string-set!]]
+     [(rmrs scheme base data symbol)
+      symbol=?                 symbol?]
+     [(rmrs scheme base data vector)
+      [(rmrs scheme base data vector base)
+       make-vector              vector
+       vector-append            vector-copy
+       vector-for-each          vector-length
+       vector-map               vector-ref
+       vector?]
+      [(rmrs scheme base data vector mutator)
+       vector-copy!             vector-fill!
+       vector-set!]]]
+    [(rmrs scheme base exception)
+     error                    error-object-irritants
+     error-object-message     error-object?
+     file-error?              read-error?]
+    [(rmrs scheme base include)
+     include                  include-ci]
+    [(rmrs scheme base kernel)
+     begin                    define
+     eq?                      equal?
+     eqv?                     if
+     lambda                   let
+     let*                     letrec
+     letrec*                  quasiquote
+     quote                    unquote
+     unquote-splicing]
+    [(rmrs scheme base literal)
+     ...                      =>
+     _                        else]
+    [(rmrs scheme base loop)
+     do]
+    [(rmrs scheme base macro)
+     define-syntax            let-syntax
+     letrec-syntax            syntax-error
+     syntax-rules]
+    [(rmrs scheme base mutator)
+     set!]
+    [(rmrs scheme base port)
+     binary-port?             call-with-port
+     char-ready?              close-input-port
+     close-output-port        close-port
+     current-error-port       current-input-port
+     current-output-port      eof-object?
+     flush-output-port        input-port-open?
+     input-port?              newline
+     output-port-open?        output-port?
+     peek-char                port?
+     read-char                read-line
+     read-string              textural-port?
+     write-char               write-string]
+    [(rmrs scheme base procedure)
+     apply                    procedure?]
+    [(rmrs scheme base raise)
+     guard                    raise
+     raise-continuable        with-exception-handler]
+    [(rmrs scheme base values)
+     call-with-values         define-values
+     let-values               let*-values
+     values]]
+   [(rmrs scheme case-lambda)
+    case-lambda]
+   [(rmrs scheme char)
+    char-alphabetic?         char-ci<=?
+    char-ci<?                char-ci=?
+    char-ci>=?               char-ci>?
+    char-downcase            char-foldcase
+    char-lower-case?         char-numeric?
+    char-upcase              char-upper-case?
+    char-whitespace?         digit-value
+    string-ci<=?             string-ci<?
+    string-ci=?              string-ci>=?
+    string-ci>?              string-downcase
+    string-foldcase          string-upcase]
+   [(rmrs scheme complex)
+    angle                    imag-part
+    magnitude                make-polar
+    make-rectangular         real-part]
+   [(rmrs scheme eval)
+    environment              eval]
+   [(rmrs scheme file)
+    call-with-input-file     call-with-output-file
+    delete-file              file-exists?
+    open-binary-input-file   open-binary-output-file
+    open-input-file          open-output-file
+    with-input-from-file     with-output-to-file]
+   [(rmrs scheme inexact)
+    acos                     asin
+    atan                     cos
+    exp                      finite?
+    infinite?                log
+    nan?                     sin
+    sqrt                     tan]
+   [(rmrs scheme load)
+    load]
+   [(rmrs scheme process-context)
+    command-line             emergency-exit
+    exit                     get-environment-variable
+    get-environment-variables]
+   [(rmrs scheme read)
+    read]
+   [(rmrs scheme repl)
+    interaction-environment]
+   [(rmrs scheme time)
+    current-jiffy            current-second
+    jiffies-per-second]
+   [(rmrs scheme write)
+    display                  write
+    write-shared             write-simple]]
+  [(rmrs srfi)
+   [(rmrs srfi srfi-0)
+    cond-expand              features]
+   [(rmrs srfi srfi-6)
+    open-input-string        open-output-string
+    get-output-string]
+   [(rmrs srfi srfi-9)
+    define-record-type]
+   [(rmrs srfi srfi-39)
+    make-parameter           parameterize]
+   [(rmrs srfi srfi-155)
+    delay                    delay-force
+    force                    make-promise
+    promise?]]]
+#+end_src
