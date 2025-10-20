@@ -19,7 +19,6 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
 - 让 Racket 程序可编译为 R6RS/R7RS-small；
 - 作为未来 typed/rmrs 的基础，为 Scheme 提供可选类型的语法前端。
 
-
 * 设计哲学
 1. **兼容性优先**：所有库可在 R6RS 与 R7RS-small 环境下编译；
 2. **模块化**：rmrs 分为多个子库，例如 ~(rmrs scheme)~ 、 ~(rmrs srfi)~ 、 ~(rmrs racket)~ ；
@@ -38,7 +37,8 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
 - 一个库导出的运算符要么是 rnrs 里的，要么是 srfi 里的，要么是 racket 里的，不能混合在一起
 - 核心库意味着要分别用 racket, r6rs, r7rs-small 写三种实现
 - 核心库的设计要参考 r7rs-small，仅可能小
-   - 为了探索库应该怎么分割，先阶段我们只保证与 Racket 相对应的库，如 ~racket base~ ~racket mpair~ ~racket case~ 导出的运算符不会被删除，与 srfi 相对应的库不会改动。 ~racket base data ...~ 以及 ~scheme~ 库的内容可能会发生变动
+   - 为了探索库应该怎么分割，现阶段我们只保证与 Racket 相对应的库，如 ~racket base~ ~racket mpair~ ~racket case~ 导出的运算符不会被删除，与 srfi 相对应的库不会改动。 ~racket base data ...~ 以及 ~scheme~ 库的内容可能会发生变动
+   - 扁平化，库会自动导出其子库的内容，比如说 ~(rmrs racket base data mpair)~ 会导出 ~(rmrs racket base data mpair base)~ ~(rmrs racket base data mpair mutator)~
 - 每个库所需要的依赖应仅可能少
 - 当 r6rs 或者 s7rs-small 里的运算符来自于 srfi 的时候，将其用 rmrs-srfi 导出
    - 比如说 ~make-parameter~ ~parameterize~
@@ -46,7 +46,6 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
    - 比如说 Scheme 的 ~pair~ ~bytevector~ 和 Racket 的 ~mpair~ ~bytes~ 是同一概念，但名字不一样，优先使用 Racket 的
 - 如果某运算符在 rnrs，srfi 和 racket 里都有相同的名字，那么优先考虑将库放在 rmrs-srfi，其次 rmrs-scheme，不应该放在 rmrs-racket 里，因为期望 rmrs-racket 导出的运算符与 rnrs srfi 都不会重名冲突
    - 比如说 ~open-input-string~ ~open-output-string~ ~get-output-string~
-
 
 * 核心库结构
 ** 第一版
