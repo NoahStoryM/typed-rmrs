@@ -300,3 +300,233 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
     force                    make-promise
     promise?]]]
 #+end_src
+
+** 第二版
+#+begin_src racket
+'[(rmrs)
+  [(rmrs racket)
+   [(rmrs racket base)
+    [(rmrs racket base case-lambda)
+     case-λ]
+    [(rmrs racket base data)
+     [(rmrs racket base data bytes)
+      [(rmrs racket base data bytes base)
+       bytes                    bytes-append
+       bytes-copy               bytes-length
+       bytes-ref                bytes?
+       make-bytes]
+      [(rmrs racket base data bytes conversion)
+       string->bytes/utf-8      bytes->string/utf-8]
+      [(rmrs racket base data bytes mutator)
+       bytes-copy!              bytes-set!]]
+     [(rmrs racket base data mpair)
+      [(rmrs racket base data mpair base)
+       mcar                     mcdr
+       mcons                    mpair?]
+      [(rmrs racket base data mpair mutator)
+       set-mcar!                set-mcdr!]]]
+    [(rmrs racket base exception)
+     exn-irritants            exn-message
+     exn:fail?                exn:fail:filesystem?
+     exn:fail:read?]
+    [(rmrs racket base lambda)
+     λ]
+    [(rmrs racket base port)
+     eof                      flush-output
+     get-output-bytes         open-input-bytes
+     open-output-bytes        peek-byte
+     port-closed?             read-bytes
+     read-bytes!              read-byte
+     string-port?             write-bytes
+     write-byte]
+    [(rmrs racket base date)
+     current-milliseconds     current-seconds]]
+   [(rmrs racket case eq)
+    case/eqv]
+   [(rmrs racket mpair)
+    [(rmrs racket mpair base)
+     make-mlist
+     mappend                  massoc
+     massq                    massv
+     mfor-each                mlength
+     mlist                    mlist-copy
+     mlist-ref                mlist-tail
+     mlist?                   mmap
+     mmember                  mmemq
+     mmemv                    mreverse]
+    [(rmrs racket mpair conversion)
+     mlist->string            mlist->vector
+     string->mlist            vector->mlist]
+    [(rmrs racket mpair mutator)
+     mlist-set!]
+    [(rmrs racket mpair cxr)
+     mcaar                    mcadr
+     mcdar                    mcddr
+     mcaaar                   mcaadr
+     mcadar                   mcaddr
+     mcdaar                   mcdadr
+     mcddar                   mcdddr
+     mcaaaar                  mcaaadr
+     mcaadar                  mcaaddr
+     mcadaar                  mcadadr
+     mcaddar                  mcadddr
+     mcdaaar                  mcdaadr
+     mcdadar                  mcdaddr
+     mcddaar                  mcddadr
+     mcdddar                  mcddddr]]]
+  [(rmrs scheme)
+   [(rmrs scheme base)
+    [(rmrs scheme base continuation)
+     call-with-current-continuation
+     call/cc                  dynamic-wind]
+    [(rmrs scheme base condition)
+     cond                     unless
+     when]
+    [(rmrs scheme base data)
+     [(rmrs scheme base data boolean)
+      and                      boolean=?
+      boolean?                 not
+      or]
+     [(rmrs scheme base data character)
+      char<=?                  char<?
+      char=?                   char>=?
+      char>?                   char?]
+     [(rmrs scheme base data conversion)
+      char->integer            integer->char
+      number->string           string->number
+      string->symbol           symbol->string]
+     [(rmrs scheme base data null)
+      null?]
+     [(rmrs scheme base data number)
+      *                        +
+      -                        /
+      <                        <=
+      =                        >
+      >=                       abs
+      ceiling                  complex?
+      denominator              even?
+      exact->inexact           exact-integer?
+      exact?                   expt
+      floor                    gcd
+      inexact->exact           inexact?
+      integer?                 lcm
+      max                      min
+      modulo                   negative?
+      number?                  numerator
+      odd?                     positive?
+      quotient                 rational?
+      rationalize              real?
+      remainder                round
+      truncate                 zero?]
+     [(rmrs scheme base data string)
+      [(rmrs scheme base data string base)
+       make-string              string
+       string-append            string-copy
+       string-length            string-ref
+       string<=?                string<?
+       string=?                 string>=?
+       string>?                 string?
+       substring]
+      [(rmrs scheme base data string mutator)
+       string-copy!             string-fill!
+       string-set!]]
+     [(rmrs scheme base data symbol)
+      symbol=?                 symbol?]
+     [(rmrs scheme base data vector)
+      [(rmrs scheme base data vector base)
+       make-vector              vector
+       vector-append            vector-copy
+       vector-length            vector-ref
+       vector?]
+      [(rmrs scheme base data vector mutator)
+       vector-copy!             vector-fill!
+       vector-set!]]]
+    [(rmrs scheme base kernel)
+     begin                    define
+     eq?                      equal?
+     eqv?                     if
+     lambda                   let
+     let*                     letrec
+     letrec*                  quasiquote
+     quote                    unquote
+     unquote-splicing]
+    [(rmrs scheme base literal)
+     ...                      =>
+     _                        else]
+    [(rmrs scheme base loop)
+     do]
+    [(rmrs scheme base macro)
+     define-syntax            let-syntax
+     letrec-syntax            syntax-rules]
+    [(rmrs scheme base mutator)
+     set!]
+    [(rmrs scheme base port)
+     close-input-port         close-output-port
+     current-error-port       current-input-port
+     current-output-port      eof-object?
+     input-port?
+     newline                  output-port?
+     peek-char                port?
+     read-char                read-line
+     read-string              write-char
+     write-string]
+    [(rmrs scheme base procedure)
+     apply                    procedure?]
+    [(rmrs scheme base values)
+     call-with-values         values]]
+   [(rmrs scheme case-lambda)
+    case-lambda]
+   [(rmrs scheme char)
+    char-alphabetic?         char-ci<=?
+    char-ci<?                char-ci=?
+    char-ci>=?               char-ci>?
+    char-downcase            char-foldcase
+    char-lower-case?         char-numeric?
+    char-upcase              char-upper-case?
+    char-whitespace?         string-ci<=?
+    string-ci<?              string-ci=?
+    string-ci>=?             string-ci>?
+    string-downcase          string-foldcase
+    string-upcase]
+   [(rmrs scheme complex)
+    angle                    imag-part
+    magnitude                make-polar
+    make-rectangular         real-part]
+   [(rmrs scheme eval)
+    environment              eval]
+   [(rmrs scheme file)
+    call-with-input-file     call-with-output-file
+    delete-file              file-exists?
+    open-input-file          open-output-file
+    with-input-from-file     with-output-to-file]
+   [(rmrs scheme inexact)
+    acos                     asin
+    atan                     cos
+    exp                      infinite?
+    log                      nan?
+    sin                      sqrt
+    tan]
+   [(rmrs scheme process-context)
+    command-line             exit]
+   [(rmrs scheme read)
+    read]
+   [(rmrs scheme write)
+    display                  write]]
+  [(rmrs srfi)
+   [(rmrs srfi srfi-6)
+    open-input-string        open-output-string
+    get-output-string]
+   [(rmrs srfi srfi-9)
+    define-record-type]
+   [(rmrs srfi srfi-11)
+    let-values               let*-values]
+   [(rmrs srfi srfi-23)
+    error]
+   [(rmrs srfi srfi-34)
+    guard                    raise
+    with-exception-handler]
+   [(rmrs srfi srfi-155)
+    delay                    delay-force
+    force                    make-promise
+    promise?]]]
+#+end_src
