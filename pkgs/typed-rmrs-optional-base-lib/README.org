@@ -608,7 +608,8 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
   [(typed rmrs optional scheme)
    [(typed rmrs optional scheme base)
     [(typed rmrs optional scheme base condition)
-     cond                     unless
+     =>                       cond
+     else                     unless
      when]
     [(typed rmrs optional scheme base continuation)
      call-with-current-continuation
@@ -682,12 +683,10 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
     [(typed rmrs optional scheme base let)
      let                      let*
      letrec                   letrec*]
-    [(typed rmrs optional scheme base literal)
-     ...                      =>
-     _                        else]
     [(typed rmrs optional scheme base loop)
      do]
     [(typed rmrs optional scheme base macro)
+     ...                      _
      define-syntax            let-syntax
      letrec-syntax            syntax-rules]
     [(typed rmrs optional scheme base mutator)
