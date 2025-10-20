@@ -473,8 +473,6 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      apply                    procedure?]
     [(rmrs scheme base values)
      call-with-values         values]]
-   [(rmrs scheme case-lambda)
-    case-lambda]
    [(rmrs scheme char)
     char-alphabetic?         char-ci<=?
     char-ci<?                char-ci=?
@@ -519,6 +517,8 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
     define-record-type]
    [(rmrs srfi srfi-11)
     let-values               let*-values]
+   [(rmrs srfi srfi-16)
+    case-lambda]
    [(rmrs srfi srfi-23)
     error]
    [(rmrs srfi srfi-34)
