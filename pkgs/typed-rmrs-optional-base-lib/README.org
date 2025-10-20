@@ -375,12 +375,12 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      mcdddar                  mcddddr]]]
   [(rmrs scheme)
    [(rmrs scheme base)
-    [(rmrs scheme base continuation)
-     call-with-current-continuation
-     call/cc                  dynamic-wind]
     [(rmrs scheme base condition)
      cond                     unless
      when]
+    [(rmrs scheme base continuation)
+     call-with-current-continuation
+     call/cc                  dynamic-wind]
     [(rmrs scheme base data)
      [(rmrs scheme base data boolean)
       and                      boolean=?
