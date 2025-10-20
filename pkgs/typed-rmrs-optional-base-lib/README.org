@@ -466,12 +466,11 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      close-input-port         close-output-port
      current-error-port       current-input-port
      current-output-port      eof-object?
-     input-port?
-     newline                  output-port?
-     peek-char                port?
-     read-char                read-line
-     read-string              write-char
-     write-string]
+     input-port?              newline
+     output-port?             peek-char
+     port?                    read-char
+     read-line                read-string
+     write-char               write-string]
     [(rmrs scheme base procedure)
      apply                    procedure?]
     [(rmrs scheme base values)
@@ -697,12 +696,11 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      close-input-port         close-output-port
      current-error-port       current-input-port
      current-output-port      eof-object?
-     input-port?
-     newline                  output-port?
-     peek-char                port?
-     read-char                read-line
-     read-string              write-char
-     write-string]
+     input-port?              newline
+     output-port?             peek-char
+     port?                    read-char
+     read-line                read-string
+     write-char               write-string]
     [(typed rmrs optional scheme base procedure)
      apply                    procedure?]
     [(typed rmrs optional scheme base values)
