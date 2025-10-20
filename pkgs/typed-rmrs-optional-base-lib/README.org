@@ -198,11 +198,12 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      begin                    define
      eq?                      equal?
      eqv?                     if
-     lambda                   let
-     let*                     letrec
-     letrec*                  quasiquote
+     lambda                   quasiquote
      quote                    unquote
      unquote-splicing]
+    [(rmrs scheme base let)
+     let                      let*
+     letrec                   letrec*]
     [(rmrs scheme base literal)
      ...                      =>
      _                        else]
@@ -445,11 +446,12 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      begin                    define
      eq?                      equal?
      eqv?                     if
-     lambda                   let
-     let*                     letrec
-     letrec*                  quasiquote
+     lambda                   quasiquote
      quote                    unquote
      unquote-splicing]
+    [(rmrs scheme base let)
+     let                      let*
+     letrec                   letrec*]
     [(rmrs scheme base literal)
      ...                      =>
      _                        else]
@@ -675,11 +677,12 @@ rmrs（*Racket Module for Revised Scheme*）是一个让 Scheme 能以 Racket �
      begin                    define
      eq?                      equal?
      eqv?                     if
-     lambda                   let
-     let*                     letrec
-     letrec*                  quasiquote
+     lambda                   quasiquote
      quote                    unquote
      unquote-splicing]
+    [(typed rmrs optional scheme base let)
+     let                      let*
+     letrec                   letrec*]
     [(typed rmrs optional scheme base literal)
      ...                      =>
      _                        else]
