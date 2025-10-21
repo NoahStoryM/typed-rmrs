@@ -28,6 +28,7 @@
   - [[#第二版][第二版]]
   - [[#第三版][第三版]]
   - [[#第四版][第四版]]
+  - [[#第五版][第五版]]
 - [[#附录][附录]]
   - [[#符号分类决策树][符号分类决策树]]
   - [[#冲突处理策略][冲突处理策略]]
@@ -194,6 +195,11 @@ RMRS 基于 Typed Racket 的类型系统：
 (rmrs typed racket optional base data mpair base)
 (rmrs typed racket optional base data mpair mutator)
 #+end_example
+
+特殊规则：
+
+- ~(rmrs typed racket optional base)~ 会导出 ~(rmrs typed scheme optional)~ 的全部内容
+- ~(rmrs typed racket optional promise)~ 会导出 ~(rmrs typed srfi optional 155)~ 的全部内容
 
 * 核心库版本历史
 ** 第一版
@@ -1107,6 +1113,226 @@ RMRS 基于 Typed Racket 的类型系统：
     angle                    imag-part
     magnitude                make-polar
     make-rectangular         real-part]
+   [(rmrs typed scheme optional eval)
+    environment              eval
+    interaction-environment]
+   [(rmrs typed scheme optional file)
+    call-with-input-file     call-with-output-file
+    delete-file              file-exists?
+    open-input-file          open-output-file
+    with-input-from-file     with-output-to-file]
+   [(rmrs typed scheme optional inexact)
+    acos                     asin
+    atan                     cos
+    exp                      infinite?
+    log                      nan?
+    sin                      sqrt
+    tan]
+   [(rmrs typed scheme optional process-context)
+    command-line             exit]
+   [(rmrs typed scheme optional read)
+    read]
+   [(rmrs typed scheme optional write)
+    display                  write]]
+  [(rmrs typed srfi optional)
+   [(rmrs typed srfi optional srfi-9)
+    define-record-type]
+   [(rmrs typed srfi optional srfi-155)
+    delay                    delay-force
+    force                    make-promise
+    promise?]]]
+#+end_src
+
+** 第五版
+#+begin_src racket
+'[(rmrs typed)
+  [(rmrs typed racket optional)
+   [(rmrs typed racket optional base)
+    [(rmrs typed racket optional base data)
+     [(rmrs typed racket optional base data bytes)
+      [(rmrs typed racket optional base data bytes base)
+       bytes                    bytes-copy
+       bytes-length             bytes-ref
+       bytes?                   make-bytes]
+      [(rmrs typed racket optional base data bytes conversion)
+       string->bytes/utf-8      bytes->string/utf-8]
+      [(rmrs typed racket optional base data bytes mutator)
+       bytes-copy!              bytes-set!]]
+     [(rmrs typed racket optional base data void)
+      void                     void?]]
+    [(rmrs typed racket optional base exception)
+     call-with-exception-handler
+     exn-irritants            exn-message
+     exn:fail?                exn:fail:filesystem?
+     exn:fail:read?           with-handlers
+     with-handlers*]
+    [(rmrs typed racket optional base kernel)
+     :                        λ
+     ann                      case-λ
+     cast                     define-type]
+    [(rmrs typed racket optional base port)
+     eof                      flush-output
+     get-output-bytes         open-input-bytes
+     open-output-bytes        peek-byte
+     port-closed?             read-bytes
+     read-bytes!              read-byte
+     string-port?             write-bytes
+     write-byte]
+    [(rmrs typed racket optional base date)
+     current-milliseconds     current-seconds]]
+   [(rmrs typed racket optional case eq)
+    case/eqv]
+   [(rmrs typed racket optional promise lazy)
+    lazy]
+   [(rmrs typed racket optional unsafe ops data pair mutator)
+    unsafe-set-immutable-car!
+    unsafe-set-immutable-cdr!]]
+  [(rmrs typed scheme optional)
+   [(rmrs typed scheme optional base)
+    [(rmrs typed scheme optional base condition)
+     =>                       cond
+     else                     unless
+     when]
+    [(rmrs typed scheme optional base continuation)
+     call-with-current-continuation
+     call/cc                  dynamic-wind]
+    [(rmrs typed scheme optional base data)
+     [(rmrs typed scheme optional base data boolean)
+      and                      boolean=?
+      boolean?                 not
+      or]
+     [(rmrs typed scheme optional base data character)
+      char<=?                  char<?
+      char=?                   char>=?
+      char>?                   char?]
+     [(rmrs typed scheme optional base data conversion)
+      char->integer            integer->char
+      list->string             list->vector
+      number->string           string->list
+      string->number           string->symbol
+      symbol->string           vector->list]
+     [(rmrs typed scheme optional base data list)
+      append                   assoc
+      assq                     assv
+      car                      cdr
+      cons                     for-each
+      length                   list
+      list-ref                 list-tail
+      list?                    map
+      member                   memq
+      memv                     null?
+      pair?                    reverse]
+     [(rmrs typed scheme optional base data number)
+      *                        +
+      -                        /
+      <                        <=
+      =                        >
+      >=                       abs
+      ceiling                  complex?
+      denominator              even?
+      exact->inexact           exact-integer?
+      exact?                   expt
+      floor                    gcd
+      inexact->exact           inexact?
+      integer?                 lcm
+      max                      min
+      modulo                   negative?
+      number?                  numerator
+      odd?                     positive?
+      quotient                 rational?
+      rationalize              real?
+      remainder                round
+      truncate                 zero?]
+     [(rmrs typed scheme optional base data string)
+      [(rmrs typed scheme optional base data string base)
+       make-string              string
+       string-append            string-copy
+       string-length            string-ref
+       string<=?                string<?
+       string=?                 string>=?
+       string>?                 string?
+       substring]
+      [(rmrs typed scheme optional base data string mutator)
+       string-copy!             string-fill!
+       string-set!]]
+     [(rmrs typed scheme optional base data symbol)
+      symbol=?                 symbol?]
+     [(rmrs typed scheme optional base data vector)
+      [(rmrs typed scheme optional base data vector base)
+       make-vector              vector
+       vector-append            vector-copy
+       vector-length            vector-ref
+       vector?]
+      [(rmrs typed scheme optional base data vector mutator)
+       vector-copy!             vector-fill!
+       vector-set!]]]
+    [(rmrs typed scheme optional base exception)
+     error                    raise]
+    [(rmrs typed scheme optional base kernel)
+     begin                    case-lambda
+     define                   eq?
+     equal?                   eqv?
+     if                       lambda
+     quasiquote               quote
+     unquote                  unquote-splicing]
+    [(rmrs typed scheme optional base let)
+     let                      let*
+     letrec                   letrec*]
+    [(rmrs typed scheme optional base loop)
+     do]
+    [(rmrs typed scheme optional base macro)
+     ...                      _
+     define-syntax            let-syntax
+     letrec-syntax            syntax-rules]
+    [(rmrs typed scheme optional base mutator)
+     set!]
+    [(rmrs typed scheme optional base port)
+     close-input-port         close-output-port
+     current-error-port       current-input-port
+     current-output-port      eof-object?
+     get-output-string        input-port?
+     newline                  open-input-string
+     open-output-string       output-port?
+     peek-char                port?
+     read-char                read-line
+     read-string              write-char
+     write-string]
+    [(rmrs typed scheme optional base procedure)
+     apply                    procedure?]
+    [(rmrs typed scheme optional base values)
+     call-with-values         let-values
+     let*-values              values]]
+   [(rmrs typed scheme optional char)
+    char-alphabetic?         char-ci<=?
+    char-ci<?                char-ci=?
+    char-ci>=?               char-ci>?
+    char-downcase            char-foldcase
+    char-lower-case?         char-numeric?
+    char-upcase              char-upper-case?
+    char-whitespace?         string-ci<=?
+    string-ci<?              string-ci=?
+    string-ci>=?             string-ci>?
+    string-downcase          string-foldcase
+    string-upcase]
+   [(rmrs typed scheme optional complex)
+    angle                    imag-part
+    magnitude                make-polar
+    make-rectangular         real-part]
+   [(rmrs typed scheme optional cxr)
+    caar                      cadr
+    cdar                      cddr
+    caaar                     caadr
+    cadar                     caddr
+    cdaar                     cdadr
+    cddar                     cdddr
+    caaaar                    caaadr
+    caadar                    caaddr
+    cadaar                    cadadr
+    caddar                    cadddr
+    cdaaar                    cdaadr
+    cdadar                    cdaddr
+    cddaar                    cddadr
+    cdddar                    cddddr]
    [(rmrs typed scheme optional eval)
     environment              eval
     interaction-environment]
