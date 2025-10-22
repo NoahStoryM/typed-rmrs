@@ -234,7 +234,7 @@ RMRS 基于 Typed Racket 的类型系统：
      peek-byte                read-bytes
      read-bytes!              read-byte
      write-bytes              write-byte]]
-   [(rmrs racket case eq)
+   [(rmrs racket case eqv)
     case/eqv]
    [(rmrs racket mpair)
     [(rmrs racket mpair base)
@@ -495,7 +495,7 @@ RMRS 基于 Typed Racket 的类型系统：
      write-byte]
     [(rmrs racket base date)
      current-milliseconds     current-seconds]]
-   [(rmrs racket case eq)
+   [(rmrs racket case eqv)
     case/eqv]
    [(rmrs racket mpair)
     [(rmrs racket mpair base)
@@ -725,7 +725,7 @@ RMRS 基于 Typed Racket 的类型系统：
      write-byte]
     [(typed rmrs optional racket base date)
      current-milliseconds     current-seconds]]
-   [(typed rmrs optional racket case eq)
+   [(typed rmrs optional racket case eqv)
     case/eqv]
    [(typed rmrs optional racket mpair)
     [(typed rmrs optional racket mpair base)
@@ -958,7 +958,7 @@ RMRS 基于 Typed Racket 的类型系统：
      write-byte]
     [(rmrs typed racket optional base date)
      current-milliseconds     current-seconds]]
-   [(rmrs typed racket optional case eq)
+   [(rmrs typed racket optional case eqv)
     case/eqv]
    [(rmrs typed racket optional promise)
     lazy]
@@ -1180,7 +1180,7 @@ RMRS 基于 Typed Racket 的类型系统：
      write-byte]
     [(rmrs typed racket optional base date)
      current-milliseconds     current-seconds]]
-   [(rmrs typed racket optional case eq)
+   [(rmrs typed racket optional case eqv)
     case/eqv]
    [(rmrs typed racket optional promise lazy)
     lazy]
