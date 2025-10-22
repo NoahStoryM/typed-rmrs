@@ -12,10 +12,10 @@
   - [[#混合用户][混合用户]]
 - [[#架构设计][架构设计]]
   - [[#设计哲学][设计哲学]]
-  - [[#三层模块体系][三层模块体系]]
-    - [[#rmrs-typed-scheme][(rmrs typed scheme)]]
-    - [[#rmrs-typed-racket][(rmrs typed racket)]]
-    - [[#rmrs-typed-srfi][(rmrs typed srfi)]]
+  - [[#多层模块体系][多层模块体系]]
+    - [[#typed-rmrs-scheme][(typed rmrs scheme)]]
+    - [[#typed-rmrs-racket][(typed rmrs racket)]]
+    - [[#typed-rmrs-srfi][(typed rmrs srfi)]]
   - [[#编译流程][编译流程]]
 - [[#技术细节][技术细节]]
   - [[#类型系统][类型系统]]
@@ -29,6 +29,7 @@
   - [[#第三版][第三版]]
   - [[#第四版][第四版]]
   - [[#第五版][第五版]]
+  - [[#第六版][第六版]]
 - [[#附录][附录]]
   - [[#符号分类决策树][符号分类决策树]]
   - [[#冲突处理策略][冲突处理策略]]
@@ -64,7 +65,7 @@ RMRS（*Racket Module for Revised Scheme*）是一个让 Scheme 程序能以 Rac
 #+begin_src racket
 #!r6rs
 
-(import (r6rs typed racket no-check base))
+(import (typed r6rs no-check racket base))
 
 (: factorial (-> Natural Natural))
 (define (factorial n) (if (<= n 1) 1 (* n (factorial (- n 1)))))
@@ -79,8 +80,8 @@ RMRS（*Racket Module for Revised Scheme*）是一个让 Scheme 程序能以 Rac
 #!r6rs
 
 (import (rnrs base)
-        (r6rs typed racket no-check base bytes)
-        (r6rs typed racket no-check base kernel))
+        (typed r6rs no-check racket base bytes)
+        (typed r6rs no-check racket base kernel))
 
 (: process (-> Bytes Bytes))
 (define (process input) (make-bytevector (bytes-length input) 12))
@@ -97,31 +98,36 @@ RMRS 遵循以下核心原则：
 6. *命名无冲突* :: 优先使用 Racket 版本，避免命名冲突
 7. *明确来源* :: 符号的放置位置明确反映其来源（Racket, Scheme, SRFI）
 
-** 三层模块体系
+** 多层模块体系
 
-RMRS 采用三层模块结构，支持开发和多目标编译：
+RMRS 采用多层模块结构，支持开发和多目标编译：
 
 #+begin_example
 开发环境 (类型检查开启):
-  rmrs/typed/racket/optional/...    ; Racket 特有功能
-  rmrs/typed/scheme/optional/...    ; Racket 和 Scheme 交集
-  rmrs/typed/srfi/optional/...      ; SRFI 标准库
+  #!typed/rmrs/optional
+  typed/rmrs/racket/...    ; Racket 特有功能
+  typed/rmrs/scheme/...    ; Racket 和 Scheme 交集
+  typed/rmrs/srfi/...      ; SRFI 标准库
 
 开发环境 (类型检查关闭):
-  rmrs/typed/racket/no-check/...    ; Racket 特有功能
-  rmrs/typed/scheme/no-check/...    ; Racket 和 Scheme 交集
-  rmrs/typed/srfi/no-check/...      ; SRFI 标准库
+  #!typed/rmrs/no-check
+  typed/rmrs/racket/...    ; Racket 特有功能
+  typed/rmrs/scheme/...    ; Racket 和 Scheme 交集
+  typed/rmrs/srfi/...      ; SRFI 标准库
 
 编译目标 (类型擦除):
-  r6rs/typed/racket/no-check/...    ; 编译到 R6RS
-  r6rs/typed/scheme/no-check/...    ; 编译到 R6RS
-  r6rs/typed/srfi/no-check/...      ; 编译到 R6RS
-  r7rs/typed/racket/no-check/...    ; 编译到 R7RS
-  r7rs/typed/scheme/no-check/...    ; 编译到 R7RS
-  r7rs/typed/srfi/no-check/...      ; 编译到 R7RS
+  #!r6rs
+  typed/r6rs/racket/no-check/...    ; 编译到 R6RS
+  typed/r6rs/scheme/no-check/...    ; 编译到 R6RS
+  typed/r6rs/srfi/no-check/...      ; 编译到 R6RS
+
+  #!r7rs
+  typed/r7rs/racket/no-check/...    ; 编译到 R7RS
+  typed/r7rs/scheme/no-check/...    ; 编译到 R7RS
+  typed/r7rs/srfi/no-check/...      ; 编译到 R7RS
 #+end_example
 
-*** (rmrs typed scheme)
+*** (typed rmrs scheme)
 
 包含 Racket 和 Scheme 的交集部分：
 - 基础语法： ~lambda~, ~define~, ~let~, ~if~, ...
@@ -129,7 +135,7 @@ RMRS 采用三层模块结构，支持开发和多目标编译：
 - 数值运算： ~+~, ~-~, ~*~, ~/~, ...
 - 多值绑定： ~let-values~, ~case-lambda~, ...
 
-*** (rmrs typed racket)
+*** (typed rmrs racket)
 
 包含 Racket 特有的功能：
 - 字节操作： ~bytes~, ~bytes-append~
@@ -137,7 +143,7 @@ RMRS 采用三层模块结构，支持开发和多目标编译：
 - 类型标注： ~:~, ~ann~, ~cast~
 - 控制流扩展： ~case/eqv~
 
-*** (rmrs typed srfi)
+*** (typed rmrs srfi)
 
 包含 SRFI 标准库：
 - SRFI-9：记录类型 (~define-record-type~)
@@ -190,19 +196,20 @@ RMRS 基于 Typed Racket 的类型系统：
 聚合模块自动重导出所有子模块内容，提供便利性：
 
 #+begin_example
-(rmrs typed racket optional base data mpair)
+(typed rmrs racket base data mpair)
   ↓ 自动导出
-(rmrs typed racket optional base data mpair base)
-(rmrs typed racket optional base data mpair mutator)
+(typed rmrs racket base data mpair base)
+(typed rmrs racket base data mpair mutator)
 #+end_example
 
 特殊规则：
 
-- ~(rmrs typed racket optional base)~ 会导出 ~(rmrs typed scheme optional)~ 的全部内容
-- ~(rmrs typed racket optional promise)~ 会导出 ~(rmrs typed srfi optional 155)~ 的全部内容
+- ~(typed rmrs racket base)~ 会导出 ~(typed rmrs scheme)~ 的全部内容
+- ~(typed rmrs racket promise)~ 会导出 ~(typed rmrs srfi 155)~ 的全部内容
 
 * 核心库版本历史
 ** 第一版
+
 #+begin_src racket
 '[(rmrs)
   [(rmrs racket)
@@ -456,6 +463,7 @@ RMRS 基于 Typed Racket 的类型系统：
 #+end_src
 
 ** 第二版
+
 #+begin_src racket
 '[(rmrs)
   [(rmrs racket)
@@ -686,6 +694,7 @@ RMRS 基于 Typed Racket 的类型系统：
 #+end_src
 
 ** 第三版
+
 #+begin_src racket
 '[(typed rmrs optional)
   [(typed rmrs optional racket)
@@ -918,6 +927,7 @@ RMRS 基于 Typed Racket 的类型系统：
 #+end_src
 
 ** 第四版
+
 #+begin_src racket
 '[(rmrs typed)
   [(rmrs typed racket optional)
@@ -1144,6 +1154,7 @@ RMRS 基于 Typed Racket 的类型系统：
 #+end_src
 
 ** 第五版
+
 #+begin_src racket
 '[(rmrs typed)
   [(rmrs typed racket optional)
@@ -1363,6 +1374,227 @@ RMRS 基于 Typed Racket 的类型系统：
     promise?]]]
 #+end_src
 
+** 第六版
+
+#+begin_src racket
+'[(typed rmrs)
+  [(typed rmrs racket)
+   [(typed rmrs racket base)
+    [(typed rmrs racket base data)
+     [(typed rmrs racket base data bytes)
+      [(typed rmrs racket base data bytes base)
+       bytes                    bytes-copy
+       bytes-length             bytes-ref
+       bytes?                   make-bytes]
+      [(typed rmrs racket base data bytes conversion)
+       string->bytes/utf-8      bytes->string/utf-8]
+      [(typed rmrs racket base data bytes mutator)
+       bytes-copy!              bytes-set!]]
+     [(typed rmrs racket base data void)
+      void                     void?]]
+    [(typed rmrs racket base exception)
+     call-with-exception-handler
+     exn-irritants            exn-message
+     exn:fail?                exn:fail:filesystem?
+     exn:fail:read?           with-handlers
+     with-handlers*]
+    [(typed rmrs racket base kernel)
+     :                        λ
+     ann                      case-λ
+     cast                     define-type]
+    [(typed rmrs racket base port)
+     eof                      flush-output
+     get-output-bytes         open-input-bytes
+     open-output-bytes        peek-byte
+     port-closed?             read-bytes
+     read-bytes!              read-byte
+     string-port?             write-bytes
+     write-byte]
+    [(typed rmrs racket base date)
+     current-milliseconds     current-seconds]]
+   [(typed rmrs racket case eqv)
+    case/eqv]
+   [(typed rmrs racket promise lazy)
+    lazy]
+   [(typed rmrs racket unsafe ops data pair mutator)
+    unsafe-set-immutable-car!
+    unsafe-set-immutable-cdr!]]
+  [(typed rmrs scheme)
+   [(typed rmrs scheme base)
+    [(typed rmrs scheme base condition)
+     =>                       cond
+     else                     unless
+     when]
+    [(typed rmrs scheme base continuation)
+     call-with-current-continuation
+     call/cc                  dynamic-wind]
+    [(typed rmrs scheme base data)
+     [(typed rmrs scheme base data boolean)
+      and                      boolean=?
+      boolean?                 not
+      or]
+     [(typed rmrs scheme base data character)
+      char<=?                  char<?
+      char=?                   char>=?
+      char>?                   char?]
+     [(typed rmrs scheme base data conversion)
+      char->integer            integer->char
+      list->string             list->vector
+      number->string           string->list
+      string->number           string->symbol
+      symbol->string           vector->list]
+     [(typed rmrs scheme base data list)
+      append                   assoc
+      assq                     assv
+      car                      cdr
+      cons                     for-each
+      length                   list
+      list-ref                 list-tail
+      list?                    map
+      member                   memq
+      memv                     null?
+      pair?                    reverse]
+     [(typed rmrs scheme base data number)
+      *                        +
+      -                        /
+      <                        <=
+      =                        >
+      >=                       abs
+      ceiling                  complex?
+      denominator              even?
+      exact->inexact           exact-integer?
+      exact?                   expt
+      floor                    gcd
+      inexact->exact           inexact?
+      integer?                 lcm
+      max                      min
+      modulo                   negative?
+      number?                  numerator
+      odd?                     positive?
+      quotient                 rational?
+      rationalize              real?
+      remainder                round
+      truncate                 zero?]
+     [(typed rmrs scheme base data string)
+      [(typed rmrs scheme base data string base)
+       make-string              string
+       string-append            string-copy
+       string-length            string-ref
+       string<=?                string<?
+       string=?                 string>=?
+       string>?                 string?
+       substring]
+      [(typed rmrs scheme base data string mutator)
+       string-copy!             string-fill!
+       string-set!]]
+     [(typed rmrs scheme base data symbol)
+      symbol=?                 symbol?]
+     [(typed rmrs scheme base data vector)
+      [(typed rmrs scheme base data vector base)
+       make-vector              vector
+       vector-append            vector-copy
+       vector-length            vector-ref
+       vector?]
+      [(typed rmrs scheme base data vector mutator)
+       vector-copy!             vector-fill!
+       vector-set!]]]
+    [(typed rmrs scheme base exception)
+     error                    raise]
+    [(typed rmrs scheme base kernel)
+     begin                    case-lambda
+     define                   eq?
+     equal?                   eqv?
+     if                       lambda
+     quasiquote               quote
+     unquote                  unquote-splicing]
+    [(typed rmrs scheme base let)
+     let                      let*
+     letrec                   letrec*]
+    [(typed rmrs scheme base loop)
+     do]
+    [(typed rmrs scheme base macro)
+     ...                      _
+     define-syntax            let-syntax
+     letrec-syntax            syntax-rules]
+    [(typed rmrs scheme base mutator)
+     set!]
+    [(typed rmrs scheme base port)
+     close-input-port         close-output-port
+     current-error-port       current-input-port
+     current-output-port      eof-object?
+     get-output-string        input-port?
+     newline                  open-input-string
+     open-output-string       output-port?
+     peek-char                port?
+     read-char                read-line
+     read-string              write-char
+     write-string]
+    [(typed rmrs scheme base procedure)
+     apply                    procedure?]
+    [(typed rmrs scheme base values)
+     call-with-values         let-values
+     let*-values              values]]
+   [(typed rmrs scheme char)
+    char-alphabetic?         char-ci<=?
+    char-ci<?                char-ci=?
+    char-ci>=?               char-ci>?
+    char-downcase            char-foldcase
+    char-lower-case?         char-numeric?
+    char-upcase              char-upper-case?
+    char-whitespace?         string-ci<=?
+    string-ci<?              string-ci=?
+    string-ci>=?             string-ci>?
+    string-downcase          string-foldcase
+    string-upcase]
+   [(typed rmrs scheme complex)
+    angle                    imag-part
+    magnitude                make-polar
+    make-rectangular         real-part]
+   [(typed rmrs scheme cxr)
+    caar                      cadr
+    cdar                      cddr
+    caaar                     caadr
+    cadar                     caddr
+    cdaar                     cdadr
+    cddar                     cdddr
+    caaaar                    caaadr
+    caadar                    caaddr
+    cadaar                    cadadr
+    caddar                    cadddr
+    cdaaar                    cdaadr
+    cdadar                    cdaddr
+    cddaar                    cddadr
+    cdddar                    cddddr]
+   [(typed rmrs scheme eval)
+    environment              eval
+    interaction-environment]
+   [(typed rmrs scheme file)
+    call-with-input-file     call-with-output-file
+    delete-file              file-exists?
+    open-input-file          open-output-file
+    with-input-from-file     with-output-to-file]
+   [(typed rmrs scheme inexact)
+    acos                     asin
+    atan                     cos
+    exp                      infinite?
+    log                      nan?
+    sin                      sqrt
+    tan]
+   [(typed rmrs scheme process-context)
+    command-line             exit]
+   [(typed rmrs scheme read)
+    read]
+   [(typed rmrs scheme write)
+    display                  write]]
+  [(typed rmrs srfi)
+   [(typed rmrs srfi srfi-9)
+    define-record-type]
+   [(typed rmrs srfi srfi-155)
+    delay                    delay-force
+    force                    make-promise
+    promise?]]]
+#+end_src
+
 * 附录
 ** 符号分类决策树
 
@@ -1373,15 +1605,15 @@ RMRS 基于 Typed Racket 的类型系统：
          /                     \
         是                      否
         ↓                       ↓
-(rmrs typed scheme)           Racket 有?
+(typed rmrs scheme)           Racket 有?
                              /         \
                              是          否
                              ↓           ↓
-                  (rmrs typed racket)  来自 SRFI?
+                  (typed rmrs racket)  来自 SRFI?
                                        /         \
                                       是          否
                                       ↓           ↓
-                             (rmrs typed srfi)  不导出
+                             (typed rmrs srfi)  不导出
 #+end_example
 
 ** 冲突处理策略
