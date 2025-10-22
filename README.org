@@ -1566,8 +1566,7 @@ RMRS 基于 Typed Racket 的类型系统：
     cddaar                    cddadr
     cdddar                    cddddr]
    [(typed rmrs scheme eval)
-    environment              eval
-    interaction-environment]
+    eval                     interaction-environment]
    [(typed rmrs scheme file)
     call-with-input-file     call-with-output-file
     delete-file              file-exists?
