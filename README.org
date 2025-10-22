@@ -1380,6 +1380,8 @@ RMRS 基于 Typed Racket 的类型系统：
 '[(typed rmrs)
   [(typed rmrs racket)
    [(typed rmrs racket base)
+    [(typed rmrs racket base cmdline)
+     current-command-line-arguments]
     [(typed rmrs racket base data)
      [(typed rmrs racket base data bytes)
       [(typed rmrs racket base data bytes base)
@@ -1580,7 +1582,7 @@ RMRS 基于 Typed Racket 的类型系统：
     sin                      sqrt
     tan]
    [(typed rmrs scheme process-context)
-    command-line             exit]
+    exit]
    [(typed rmrs scheme read)
     read]
    [(typed rmrs scheme write)
