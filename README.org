@@ -107,13 +107,13 @@ RMRS 采用多层模块结构，支持开发和多目标编译：
 开发环境 (类型检查开启):
   #!typed/rmrs/optional
   typed/rmrs/racket/...    ; Racket 特有功能
-  typed/rmrs/scheme/...    ; Racket 和 Scheme 交集
+  typed/rmrs/scheme/...    ; Racket base 和 Scheme 交集
   typed/rmrs/srfi/...      ; SRFI 标准库
 
 开发环境 (类型检查关闭):
   #!typed/rmrs/no-check
   typed/rmrs/racket/...    ; Racket 特有功能
-  typed/rmrs/scheme/...    ; Racket 和 Scheme 交集
+  typed/rmrs/scheme/...    ; Racket base 和 Scheme 交集
   typed/rmrs/srfi/...      ; SRFI 标准库
 
 编译目标 (类型擦除):
@@ -130,7 +130,7 @@ RMRS 采用多层模块结构，支持开发和多目标编译：
 
 *** (typed rmrs scheme)
 
-包含 Racket 和 Scheme 的交集部分：
+包含 Racket base 和 Scheme 的交集部分：
 - 基础语法： ~lambda~, ~define~, ~let~, ~if~, ...
 - 数据类型： ~char~, ~vector~, ~string~, ...
 - 数值运算： ~+~, ~-~, ~*~, ~/~, ...
